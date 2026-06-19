@@ -9,7 +9,7 @@ from tensorflow.keras.models import load_model
 
 model = load_model("best_model.keras")
 
-# Dictionary of traffic sign names
+# Dictionary of traffic sign classes
 
 classes = {
 0:'Speed limit (20km/h)',
@@ -57,7 +57,7 @@ classes = {
 42:'End of no passing by vehicles over 3.5 tons'
 }
 
-# Page title
+# Page settings
 
 st.set_page_config(
     page_title="Traffic Sign Classification",
@@ -67,42 +67,43 @@ st.set_page_config(
 
 # Sidebar
 
-st.sidebar.title("About Project")
+st.sidebar.title("📌 Project Information")
 
-st.sidebar.info(
-"""
-Model : CNN
+st.sidebar.write("### Model")
+st.sidebar.success("Custom CNN")
 
-Validation Accuracy : 99.39%
+st.sidebar.write("### Validation Accuracy")
+st.sidebar.success("99.39 %")
 
-Dataset : GTSRB
+st.sidebar.write("### Dataset")
+st.sidebar.info("German Traffic Sign Recognition Benchmark (GTSRB)")
 
-Framework : TensorFlow + Streamlit
-"""
-)
+st.sidebar.write("### Framework")
+st.sidebar.info("TensorFlow + Streamlit")
 
 # Main title
 
-st.title("🚦 Traffic Sign Classification")
+st.title("🚦 Traffic Sign Classification Using CNN")
 
-st.write(
-"Upload an image and the model will predict the traffic sign."
+st.markdown(
+"""
+Upload a traffic sign image and the model will predict the traffic sign class.
+"""
 )
 
 # Upload image
 
 uploaded_file = st.file_uploader(
-    "Choose an image",
-    type=["jpg","jpeg","png"]
+    "Upload an image",
+    type=["jpg", "jpeg", "png"]
 )
 
 if uploaded_file is not None:
 
-    # Open image
+    # Open image and convert to RGB
+    image = Image.open(uploaded_file).convert("RGB")
 
-    image = Image.open(uploaded_file)
-
-    # Show image
+    # Show uploaded image
 
     st.image(
         image,
@@ -114,47 +115,58 @@ if uploaded_file is not None:
 
     if st.button("Predict"):
 
-        # Resize image
+        # Resize image to model input size
 
-        image = image.resize((30,30))
+        img = image.resize((30,30))
 
-        # Convert image into numpy array
+        # Convert image to numpy array
 
-        image = np.array(image)
+        img = np.array(img)
 
-        # Normalize image
+        # Normalize pixel values
 
-        image = image / 255.0
+        img = img / 255.0
 
         # Add batch dimension
 
-        image = np.expand_dims(image, axis=0)
+        img = np.expand_dims(img, axis=0)
 
         # Make prediction
-        st.write(image.shape)
 
-        prediction = model.predict(image)
+        prediction = model.predict(img)
 
-        # Find class index
+        # Get predicted class
 
         class_index = np.argmax(prediction)
 
-        # Calculate confidence
+        # Calculate confidence score
 
         confidence = np.max(prediction) * 100
 
-        # Show prediction
+        # Display result
 
         st.success(
-            f"Predicted Sign : {classes[class_index]}"
+            f"🎯 Predicted Sign: {classes[class_index]}"
         )
 
-        # Show confidence
+        # Display confidence
 
         st.info(
-            f"Confidence : {confidence:.2f}%"
+            f"📈 Confidence Score: {confidence:.2f}%"
         )
 
-        # Show progress bar
+        # Progress bar
 
         st.progress(int(confidence))
+
+# Footer
+
+st.markdown("---")
+
+st.markdown(
+"""
+### ❤️ Built with TensorFlow and Streamlit
+
+Traffic Sign Classification using Deep Learning (CNN)
+"""
+)
