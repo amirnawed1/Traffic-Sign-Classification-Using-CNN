@@ -127,7 +127,7 @@ if uploaded_file is not None:
         # Convert RGB to BGR
         # Training images were loaded using OpenCV
 
-        img = img[:, :, ::-1]
+        # img = img[:, :, ::-1]
 
         # Normalize pixel values
 
@@ -148,6 +148,8 @@ if uploaded_file is not None:
         # Highest probability class
 
         class_index = top5_indices[0]
+
+        st.write("Predicted Class Index:", class_index)
         
         # Show predicted class index
         
