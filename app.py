@@ -148,6 +148,10 @@ if uploaded_file is not None:
         # Highest probability class
 
         class_index = top5_indices[0]
+        
+        # Show predicted class index
+        
+        st.write("Predicted Class Index:", class_index)
 
         # Confidence score
 
