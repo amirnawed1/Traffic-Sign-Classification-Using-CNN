@@ -87,7 +87,7 @@ st.title("🚦 Traffic Sign Classification Using CNN")
 
 st.markdown(
 """
-Upload a traffic sign image and the model will predict the traffic sign class.
+Upload a traffic sign image and the model will predict the traffic sign.
 """
 )
 
@@ -100,10 +100,11 @@ uploaded_file = st.file_uploader(
 
 if uploaded_file is not None:
 
-    # Open image and convert to RGB
+    # Open image and convert RGBA to RGB
+
     image = Image.open(uploaded_file).convert("RGB")
 
-    # Show uploaded image
+    # Display image
 
     st.image(
         image,
@@ -115,59 +116,50 @@ if uploaded_file is not None:
 
     if st.button("Predict"):
 
-        # Resize image to model input size
+        # Resize image
 
-img = image.resize((30,30))
+        img = image.resize((30, 30))
 
-# Convert image to numpy array
+        # Convert image to numpy array
 
-img = np.array(img)
+        img = np.array(img)
 
-# Convert RGB to BGR
-# This matches the format used during training with OpenCV
+        # Convert RGB to BGR
+        # Training images were loaded using OpenCV
 
-img = img[:, :, ::-1]
+        img = img[:, :, ::-1]
 
-# Normalize pixel values
+        # Normalize pixel values
 
-img = img / 255.0
+        img = img / 255.0
 
-# Add batch dimension
+        # Add batch dimension
 
-img = np.expand_dims(img, axis=0)
+        img = np.expand_dims(img, axis=0)
 
-# Make prediction
+        # Make prediction
 
-prediction = model.predict(img)
+        prediction = model.predict(img)
 
-        # Get predicted class
+        # Get top 5 predictions
 
-        # Show top 5 predictions
+        top5_indices = np.argsort(prediction[0])[-5:][::-1]
 
-top5_indices = np.argsort(prediction[0])[-5:][::-1]
+        # Highest probability class
 
-st.write("Top 5 Predictions")
+        class_index = top5_indices[0]
 
-for i in top5_indices:
-    st.write(
-        f"{classes[i]} : {prediction[0][i]*100:.2f}%"
-    )
-
-# Select the highest probability class
-
-class_index = top5_indices[0]
-
-        # Calculate confidence score
+        # Confidence score
 
         confidence = np.max(prediction) * 100
 
-        # Display result
+        # Show prediction
 
         st.success(
             f"🎯 Predicted Sign: {classes[class_index]}"
         )
 
-        # Display confidence
+        # Show confidence
 
         st.info(
             f"📈 Confidence Score: {confidence:.2f}%"
@@ -176,6 +168,16 @@ class_index = top5_indices[0]
         # Progress bar
 
         st.progress(int(confidence))
+
+        # Show top 5 predictions
+
+        st.write("### Top 5 Predictions")
+
+        for i in top5_indices:
+
+            st.write(
+                f"{classes[i]} : {prediction[0][i]*100:.2f}%"
+            )
 
 # Footer
 
