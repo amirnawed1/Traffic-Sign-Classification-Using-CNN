@@ -117,27 +117,45 @@ if uploaded_file is not None:
 
         # Resize image to model input size
 
-        img = image.resize((30,30))
+img = image.resize((30,30))
 
-        # Convert image to numpy array
+# Convert image to numpy array
 
-        img = np.array(img)
+img = np.array(img)
 
-        # Normalize pixel values
+# Convert RGB to BGR
+# This matches the format used during training with OpenCV
 
-        img = img / 255.0
+img = img[:, :, ::-1]
 
-        # Add batch dimension
+# Normalize pixel values
 
-        img = np.expand_dims(img, axis=0)
+img = img / 255.0
 
-        # Make prediction
+# Add batch dimension
 
-        prediction = model.predict(img)
+img = np.expand_dims(img, axis=0)
+
+# Make prediction
+
+prediction = model.predict(img)
 
         # Get predicted class
 
-        class_index = np.argmax(prediction)
+        # Show top 5 predictions
+
+top5_indices = np.argsort(prediction[0])[-5:][::-1]
+
+st.write("Top 5 Predictions")
+
+for i in top5_indices:
+    st.write(
+        f"{classes[i]} : {prediction[0][i]*100:.2f}%"
+    )
+
+# Select the highest probability class
+
+class_index = top5_indices[0]
 
         # Calculate confidence score
 
