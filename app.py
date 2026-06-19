@@ -131,6 +131,7 @@ if uploaded_file is not None:
         image = np.expand_dims(image, axis=0)
 
         # Make prediction
+        st.write(image.shape)
 
         prediction = model.predict(image)
 
