@@ -115,19 +115,13 @@ if uploaded_file is not None:
     # Predict button
 
     if st.button("Predict"):
-
         # Resize image
 
-        img = image.resize((30, 30))
+        img = image.resize((30,30))
 
         # Convert image to numpy array
 
         img = np.array(img)
-
-        # Convert RGB to BGR
-        # Training images were loaded using OpenCV
-
-        # img = img[:, :, ::-1]
 
         # Normalize pixel values
 
@@ -140,6 +134,8 @@ if uploaded_file is not None:
         # Make prediction
 
         prediction = model.predict(img)
+
+        
 
         # Get top 5 predictions
 
